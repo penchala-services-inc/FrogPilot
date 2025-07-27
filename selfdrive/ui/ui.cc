@@ -422,6 +422,10 @@ void Device::updateBrightness(const UIState &s, const FrogPilotUIState &fs) {
   int brightness = brightness_filter.update(clipped_brightness);
   if (!awake) {
     brightness = 0;
+  } else if (s.scene.started && !(s.scene.enabled || s.scene.always_on_lateral_enabled)) {
+    brightness = 0;
+  } else if (s.scene.started && (s.scene.enabled || s.scene.always_on_lateral_enabled) && s.scene.standstill) {
+    brightness = 0;
   } else if (s.scene.started && frogpilot_toggles.value("force_onroad").toBool()) {
     brightness = 100;
   } else if (s.scene.started && frogpilot_toggles.value("standby_mode").toBool() && !frogpilot_scene.wake_up_screen && interactive_timeout == 0) {
